@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Time Planner</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#4A6CF7,#6A8DFF);
+padding:20px;
+transition:0.5s;
+}
+
+.dark{
+background:#121212;
+color:white;
+}
+
+.dark .card{
+background:#1f1f1f;
+color:white;
+}
+
+.dark table{
+color:white;
+}
+
+.dark td{
+background:#222;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+header{
+text-align:center;
+color:white;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2{
+margin-bottom:10px;
+color:#4A6CF7;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:5px;
+color:white;
+}
+
+.add{
+background:#4A6CF7;
+}
+
+.save{
+background:#28a745;
+}
+
+.display{
+background:#ff9800;
+}
+
+.delete{
+background:#dc3545;
+}
+
+.darkbtn{
+background:black;
+}
+
+.quotebtn{
+background:purple;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:#4A6CF7;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+.progress-bar{
+height:25px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:green;
+transition:0.5s;
+}
+
+#notification{
+display:none;
+background:green;
+color:white;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+}
+
+.quote{
+font-style:italic;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<h1>📚 Student Time Planner</h1>
+
+<p>Create Daily Study Schedule</p>
+
+</header>
+
+<div class="card">
+
+<h2>Student Name</h2>
+
+<input
+type="text"
+id="student"
+placeholder="Enter Name">
+
+</div>
+
+<div class="card">
+
+<h2>Create Schedule</h2>
+
+<select id="subject">
+
+<option value="">Select Subject</option>
+
+<option>Artificial Intelligence</option>
+
+<option>Information Technology</option>
+
+<option>Mathematics</option>
+
+<option>Fundamentals of Electronics & Communication</option>
+
+<option>Quantum Physics</option>
+
+</select>
+
+<input
+type="text"
+id="time"
+placeholder="Enter Time Slot">
+
+<br><br>
+
+<button class="add" onclick="addSchedule()">
+Add
+</button>
+
+<button class="save" onclick="saveSchedule()">
+Save
+</button>
+
+<button class="display" onclick="displaySchedule()">
+Display
+</button>
+
+<button class="delete" onclick="deleteSchedule()">
+Delete
+</button>
+
+<button class="darkbtn" onclick="toggleDarkMode()">
+🌙 Dark Mode
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Search Subject</h2>
+
+<input
+type="text"
+id="search"
+placeholder="Search Subject"
+onkeyup="searchSubject()">
+
+</div>
+
+<div class="card">
+
+<h2>Daily Planner</h2>
+
+<table id="table">
+
+<tr>
+<th>Subject</th>
+<th>Time Slot</th>
+</tr>
+
+<tr>
+<td>AI</td>
+<td>7AM - 8AM</td>
+</tr>
+
+<tr>
+<td>IT</td>
+<td>8AM - 9AM</td>
+</tr>
+
+<tr>
+<td>Mathematics</td>
+<td>7PM - 8PM</td>
+</tr>
+
+<tr>
+<td>FEC</td>
+<td>8PM - 9PM</td>
+</tr>
+
+<tr>
+<td>Quantum Physics</td>
+<td>9PM - 10PM</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Weekly Planner</h2>
+
+<table>
+
+<tr>
+<th>Day</th>
+<th>Subject</th>
+</tr>
+
+<tr>
+<td>Monday</td>
+<td>AI</td>
+</tr>
+
+<tr>
+<td>Tuesday</td>
+<td>IT</td>
+</tr>
+
+<tr>
+<td>Wednesday</td>
+<td>Mathematics</td>
+</tr>
+
+<tr>
+<td>Thursday</td>
+<td>FEC</td>
+</tr>
+
+<tr>
+<td>Friday</td>
+<td>Quantum Physics</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Study Progress</h2>
+
+<div class="progress-bar">
+
+<div
+class="progress"
+id="progress">
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Motivational Quotes</h2>
+
+<p id="quote" class="quote">
+
+Click Button For Quote
+
+</p>
+
+<button
+class="quotebtn"
+onclick="generateQuote()">
+
+Generate Quote
+
+</button>
+
+</div>
+
+<div id="notification"></div>
+
+</div>
+
+<script>
+
+var schedules=[];
+
+function addSchedule(){
+
+var subject=
+document.getElementById("subject").value;
+
+var time=
+document.getElementById("time").value;
+
+if(subject==="" || time===""){
+
+alert("Please Fill All Fields");
+
+return;
+
+}
+
+schedules.push({
+subject:subject,
+time:time
+});
+
+updateTable();
+
+updateProgress();
+
+showNotification("Schedule Added");
+
+}
+
+function updateTable(){
+
+var table=
+document.getElementById("table");
+
+table.innerHTML=
+`
+<tr>
+<th>Subject</th>
+<th>Time Slot</th>
+</tr>
+`;
+
+for(var i=0;i<schedules.length;i++){
+
+table.innerHTML+=
+`
+<tr>
+<td>${schedules[i].subject}</td>
+<td>${schedules[i].time}</td>
+</tr>
+`;
+
+}
+
+}
+
+function saveSchedule(){
+
+localStorage.setItem(
+"planner",
+JSON.stringify(schedules)
+);
+
+showNotification("Schedule Saved");
+
+}
+
+function displaySchedule(){
+
+var data=
+JSON.parse(
+localStorage.getItem("planner")
+);
+
+if(data){
+
+schedules=data;
+
+updateTable();
+
+showNotification("Schedule Loaded");
+
+}
+
+}
+
+function deleteSchedule(){
+
+localStorage.removeItem("planner");
+
+schedules=[];
+
+updateTable();
+
+document.getElementById(
+"progress"
+).style.width="0%";
+
+showNotification("Schedule Deleted");
+
+}
+
+function updateProgress(){
+
+var percent=
+(schedules.length/5)*100;
+
+if(percent>100){
+
+percent=100;
+
+}
+
+document.getElementById(
+"progress"
+).style.width=
+percent+"%";
+
+}
+
+function generateQuote(){
+
+var quotes=[
+
+"Study now, shine later.",
+
+"Success starts with discipline.",
+
+"Dream big and work hard.",
+
+"Consistency beats talent.",
+
+"Never stop learning."
+
+];
+
+var random=
+Math.floor(
+Math.random()*quotes.length
+);
+
+document.getElementById(
+"quote"
+).innerHTML=
+quotes[random];
+
+}
+
+function searchSubject(){
+
+var input=
+document.getElementById(
+"search"
+).value.toLowerCase();
+
+var rows=
+document.querySelectorAll(
+"#table tr"
+);
+
+rows.forEach(function(row){
+
+if(
+row.innerText.toLowerCase()
+.includes(input)
+){
+
+row.style.display="";
+
+}else{
+
+row.style.display="none";
+
+}
+
+});
+
+}
+
+function showNotification(msg){
+
+var box=
+document.getElementById(
+"notification"
+);
+
+box.style.display="block";
+
+box.innerHTML=msg;
+
+setTimeout(function(){
+
+box.style.display="none";
+
+},3000);
+
+}
+
+function toggleDarkMode(){
+
+document.body.classList.toggle(
+"dark"
+);
+
+}
+
+</script>
+
+</body>
+</html>
+
